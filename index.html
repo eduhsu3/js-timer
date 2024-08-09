@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div><label for="">시</label><input type="number" id="iptHour" min="0" /> : <label for="">분</label><input type="number" id="iptMinute" min="0" max="59" /> : <label for="">초</label><input type="number" id="iptSecond" min="0" max="59" /></div>
+        <div><button type="button" id="startBtn">시작</button><button type="button" id="stopBtn">멈춤</button><button type="button" id="resetBtn">초기화</button></div>
+        <p class="result_txt"></p>
+        <script>
+            const eleStartBtn = document.querySelector('#startBtn');
+            const eleStopBtn = document.querySelector('#stopBtn');
+            const eleResetBtn = document.querySelector('#resetBtn');
+
+            const eleHour = document.querySelector('#iptHour');
+            const eleMinute = document.querySelector('#iptMinute');
+            const eleSecond = document.querySelector('#iptSecond');
+            const eleResultTxt = document.querySelector('.result_txt');
+
+            //===========================================================
+            //===========================================================
+            //===========================================================
+
+            //타이머 반복 실행 함수
+            let timerId = null;
+            let totalSecond = 0;
+
+            //토탈 초를 시:분:초 로 분리해주는 함수
+            function totalSecondDivide() {
+                let myHour = Math.floor(totalSecond / 3600);
+                let myMinute = Math.floor((totalSecond % 3600) / 60);
+                let mySecond = totalSecond % 60;
+
+                eleResultTxt.textContent = `${String(myHour).padStart(2, '0')} : ${String(myMinute).padStart(2, '0')} : ${String(mySecond).padStart(2, '0')} `;
+            }
+
+            function timerFnc() {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+
+                //전체 초를 setInterval를 이용해서 1초 간격으로 전체 초를 감산하면서 반복 화면에 출력해줌
+                timerId = setInterval(() => {
+                    if (totalSecond > 0) {
+                        totalSecond--;
+                        totalSecondDivide();
+                    } else {
+                        clearInterval(timerId);
+                        timerId = null;
+                        totalSecond = 0;
+                        alert('타이머 종료');
+                    }
+                }, 1000);
+            }
+
+            //===================================================================
+            //===================================================================
+            //===================================================================
+
+            eleStopBtn.addEventListener('click', () => {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+            });
+
+            eleStartBtn.addEventListener('click', () => {
+                if (timerId == null) {
+                    if (totalSecond === 0) {
+                        let eleHourValue = Number(eleHour.value);
+                        let eleMinuteValue = Number(eleMinute.value);
+                        let eleSecondValue = Number(eleSecond.value);
+                        totalSecond = eleHourValue * 3600 + eleMinuteValue * 60 + eleSecondValue;
+
+                        eleResultTxt.textContent = `${String(eleHourValue).padStart(2, '0')} : ${String(eleMinuteValue).padStart(2, '0')} : ${String(eleSecondValue).padStart(2, '0')} `;
+                        eleHour.value = '';
+                        eleMinute.value = '';
+                        eleSecond.value = '';
+                    }
+                    timerFnc();
+                }
+            });
+
+            //===================================================================
+        </script>
+    </body>
+</html>
